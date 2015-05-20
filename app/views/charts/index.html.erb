@@ -1,0 +1,79 @@
+<h1>Charts#index</h1>
+<p>Find me in app/views/charts/index.html.erb</p>
+<div id="container" style="height: 400px; min-width: 310px"></div>
+
+<script>
+$(function () {
+
+    $.getJSON('/charts/get_data/?factor=3500', function (data) {
+
+        // Create a timer
+        var start = +new Date();
+
+        // Create the chart
+        $('#container').highcharts('StockChart', {
+            chart: {
+                events: {
+                    load: function () {
+                        if (!window.isComparing) {
+                            this.setTitle(null, {
+                                text: 'Built chart in ' + (new Date() - start) + 'ms'
+                            });
+                        }
+                    }
+                },
+                zoomType: 'x'
+            },
+
+            rangeSelector: {
+                
+                buttons: [{
+                    type: 'day',
+                    count: 1,
+                    text: '1T'
+                }, {
+                    type: 'week',
+                    count: 1,
+                    text: '1W'
+                }, {
+                    type: 'month',
+                    count: 1,
+                    text: '1M'
+                }, {
+                    type: 'month',
+                    count: 6,
+                    text: '6M'
+                }, 
+                ],
+                selected: 1
+            },
+
+            yAxis: {
+                title: {
+                    text: 'Consumption (%W)'
+                }
+            },
+
+            title: {
+                text: 'Lastprofil'
+            },
+
+            subtitle: {
+                text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
+            },
+
+            series: [{
+                name: 'Consumption',
+                data: data,
+                pointStart: Date.UTC(2015, 4, 1),
+                pointInterval: 3600 * 1000/4,
+                tooltip: {
+                    valueDecimals: 8,
+                    valueSuffix: 'W'
+                }
+            }]
+
+        });
+    });
+});
+</script>
